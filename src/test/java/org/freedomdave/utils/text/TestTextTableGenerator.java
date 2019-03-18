@@ -15,6 +15,7 @@
 
 package org.freedomdave.utils.text;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -23,16 +24,28 @@ public class TestTextTableGenerator {
 
     @Test
     public void testTableGenerator() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("+---------------+-------------+------------------+\n");
+        sb.append("|   EMPLOYEE    |  JOB TITLE  |      SALARY      |\n");
+        sb.append("+---------------+-------------+------------------+\n");
+        sb.append("|  Jane Doe     |  CEO        |      $1,200,000  |\n");
+        sb.append("|  John Doe     |  Developer  |         $51,232  |\n");
+        sb.append("|  Joe Sellers  |  Sales      |  (Base) $20,000  |\n");
+        sb.append("+---------------+-------------+------------------+\n");
+
+        final String expected = sb.toString();
+
         TextTableGenerator generator = new TextTableGenerator();
-        generator.addColumn(new TextTableColumn("HOST"));
-        generator.addColumn(new TextTableColumn("VERSION"));
-        generator.addColumn(new TextTableColumn( "BUILD"));
+        generator.addColumn(new TextTableColumn("EMPLOYEE"));
+        generator.addColumn(new TextTableColumn("JOB TITLE"));
+        generator.addColumn(new TextTableColumn("SALARY"));
 
-        generator.addRow(Arrays.asList(new String[] { "wloolt2cs1.ts.mitra.com", "8.1.2", "1550.R80.b119.20181228"}));
-        generator.addRow(Arrays.asList(new String[] { "wloolt3cs1.ts.mitra.com", "8.1.4", "1700.R81.b123.20190201"}));
-        generator.addRow(Arrays.asList(new String[] { "WTLLF421", "8.1.4", "SNAPSHOT-1.0.0"}));
+        generator.addRow(Arrays.asList(new String[]{"Jane Doe", "CEO", "$1,200,000"}));
+        generator.addRow(Arrays.asList(new String[]{"John Doe", "Developer", "$51,232"}));
+        generator.addRow(Arrays.asList(new String[]{"Joe Sellers", "Sales", "(Base) $20,000"}));
 
-        generator.getColumnByName("BUILD").setAlignment(TextFormatter.Alignment.CENTER);
-        generator.print();
+        generator.getColumnByName("SALARY").setAlignment(TextFormatter.Alignment.RIGHT);
+        String actual = generator.generate();
+        Assert.assertEquals(expected, actual);
     }
 }

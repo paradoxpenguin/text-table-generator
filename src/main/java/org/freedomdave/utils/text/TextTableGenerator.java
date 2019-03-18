@@ -21,6 +21,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class generates text tables for tabular data. The data may be provided by row or by
+ * column.  Column widths are auto-calculated by default or can be set to a fixed width.
+ * Values that are longer than the overridden specified width are truncated with ellipsis.
+ * Each column may also have an alignment set for its values: LEFT, RIGHT, or CENTER
+ * <p><em>The API is designed to be simple with reasonable defaults for most usages.  A
+ * table can be generated in just a few lines of code.</em></p>
+ */
 public class TextTableGenerator {
     private static final Logger log = LoggerFactory.getLogger(TextTableGenerator.class);
 
@@ -30,6 +38,7 @@ public class TextTableGenerator {
     protected static final char PADDING_CHAR = ' ';
 
     protected static final String EMPTY_CELL = "";
+    protected static final String NEWLINE = "\n";
     protected static final int DEFAULT_PADDING = 2;
 
     protected int padding = DEFAULT_PADDING;
@@ -44,6 +53,16 @@ public class TextTableGenerator {
         this.columns = new ArrayList<>();
     }
 
+    /**
+     * Creates a copy of values for a row given an existing set of values and the number of
+     * columns in the row. If there are fewer items in the provided row than there are
+     * columns then the row is padded with empty values. If there are more values than there
+     * are rows, the extra values are ignored.
+     *
+     * @param src  [in] The set of values for the row.
+     * @param cols [in] The number of columns in the row.
+     * @return A set of values for a row in the table (exactly <em>cols</em> items.)
+     */
     protected static String[] copyRow(String[] src, int cols) {
         String[] row = new String[cols];
         for (int i = 0; i < cols; i++) {
@@ -56,10 +75,19 @@ public class TextTableGenerator {
         return row;
     }
 
+    /**
+     * Returns the current padding for the table.
+     */
     public int getPadding() {
         return padding;
     }
 
+    /**
+     * Sets the number of padding characters for each cell in the table.  For example, a value of
+     * 2 means that each cell value in the table will be padded with 2 spaces to the left and
+     * right of the cell's displayed value.
+     * @param padding [in] Number of characters to be used for padding each cell in the table.
+     */
     public void setPadding(int padding) {
         if (padding < 0) {
             String msg = String.format("setPadding: invalid padding [%d] -> padding must be > 0", padding);
@@ -143,46 +171,58 @@ public class TextTableGenerator {
     /**
      * This method generates the entire table based on the current values and settings.
      */
-    public void print() {
+    public String generate() {
+        StringBuilder sb = new StringBuilder();
         int rows = getNumRows();
         if (printHeaders) {
-            System.out.println(printHorizontalLine());
-            System.out.println(printHeader());
+            sb.append(generateHorizontalLine());
+            sb.append(generateHeader());
         }
-        System.out.println(printHorizontalLine());
+        sb.append(generateHorizontalLine());
         for (int i = 0; i < rows; i++) {
-            System.out.println(printRow(i));
+            sb.append(generateRow(i));
         }
-        System.out.println(printHorizontalLine());
+        sb.append(generateHorizontalLine());
+        return sb.toString();
     }
 
     /**
-     *
-     * @return
+     * Generates a horizontal line for the table, taking into account each of the columns in the
+     * table and their widths.
      */
-    protected String printHorizontalLine() {
+    protected String generateHorizontalLine() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < columns.size(); i++) {
             sb.append(CELL_CONNECTOR_CHAR);
             sb.append(TextFormatter.fill(columns.get(i).getWidth() + 2 * getPadding(), HORIZ_LINE_CHAR));
         }
         sb.append(CELL_CONNECTOR_CHAR);
+        sb.append(NEWLINE);
         return sb.toString();
     }
 
-    protected String printHeader() {
+    /**
+     * Generates the header for the table. The header is a row surrounded by horizontal lines
+     * that indicates the name of each column (centered).
+     */
+    protected String generateHeader() {
         final String padding = TextFormatter.fill(getPadding(), PADDING_CHAR);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < columns.size(); i++) {
             TextTableColumn col = columns.get(i);
             TextField header = new TextField(col.getName(), col.getWidth(), TextFormatter.Alignment.CENTER);
-            sb.append(printCell(header));
+            sb.append(generateCell(header));
         }
         sb.append(VERT_LINE_CHAR);
+        sb.append(NEWLINE);
         return sb.toString();
     }
 
-    protected String printCell(TextField cell) {
+    /**
+     * Generates the string containing the padded cells value. It includes the vertical separator
+     * disignating the start of the column and the cells fitted text value including any padding.
+     */
+    protected String generateCell(TextField cell) {
         final String padding = TextFormatter.fill(getPadding(), PADDING_CHAR);
         StringBuilder sb = new StringBuilder();
         sb.append(VERT_LINE_CHAR);
@@ -192,15 +232,20 @@ public class TextTableGenerator {
         return sb.toString();
     }
 
-    protected String printRow(int row) {
+    /**
+     * Generates a string that is the rendering of a single row of the table. Includes fitted
+     * values for each of the columns and vertical separators between each of the columns.
+     */
+    protected String generateRow(int row) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < columns.size(); i++) {
             TextTableColumn col = columns.get(i);
             String text = (row < col.getNumRows()) ? col.getRowValue(row) : EMPTY_CELL;
             TextField cell = new TextField(text, col.getWidth(), col.getAlignment());
-            sb.append(printCell(cell));
+            sb.append(generateCell(cell));
         }
         sb.append(VERT_LINE_CHAR);
+        sb.append(NEWLINE);
         return sb.toString();
     }
 }

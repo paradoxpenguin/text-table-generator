@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"org.freedomdave.utils.text","l":"TextFormatter.Alignment"},{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.freedomdave.utils.text","l":"TextField"},{"p":"org.freedomdave.utils.text","l":"TextFormatter"},{"p":"org.freedomdave.utils.text","l":"TextTableColumn"},{"p":"org.freedomdave.utils.text","l":"TextTableGenerator"}]
