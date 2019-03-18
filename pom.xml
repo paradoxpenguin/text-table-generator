@@ -8,7 +8,7 @@
 
     <scm>
         <connection>scm:git:git@github.com:paradoxpenguin/text-table-generator.git</connection>
-        <developerConnection>scm:git:file://C:\projects\text-table-generator</developerConnection>
+        <developerConnection>scm:git:git@github.com:paradoxpenguin/text-table-generator.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -17,6 +17,14 @@
             <id>site</id>
             <url>scm:git:git@github.com:paradoxpenguin/text-table-generator.git</url>
         </site>
+		<repository>
+			<id>nexus-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases</url>
+		</repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
@@ -31,14 +39,20 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>@{project.version}</tagNameFormat>
-                    <releaseProfiles>release</releaseProfiles>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<releaseProfiles>releases</releaseProfiles>
+				</configuration>
+				</plugin>
             <plugin>
                 <artifactId>maven-scm-publish-plugin</artifactId>
                 <version>1.1</version>
@@ -48,6 +62,35 @@
             </plugin>
         </plugins>
     </build>
+
+	<profiles>
+	   <profile>
+		  <id>releases</id>
+		  <build>
+			 <plugins>
+				<plugin>
+				   <groupId>org.sonatype.plugins</groupId>
+				   <artifactId>nexus-staging-maven-plugin</artifactId>
+				   <version>1.5.1</version>
+				   <executions>
+					  <execution>
+						 <id>default-deploy</id>
+						 <phase>deploy</phase>
+						 <goals>
+							<goal>deploy</goal>
+						 </goals>
+					  </execution>
+				   </executions>
+				   <configuration>
+					  <serverId>nexus-releases</serverId>
+					  <nexusUrl>https://oss.sonatype.org/content/repositories/releases</nexusUrl>
+					  <skipStaging>true</skipStaging>
+				   </configuration>
+				</plugin>
+			 </plugins>
+		  </build>
+	   </profile>
+	</profiles>
 
     <dependencies>
         <dependency>
