@@ -4,12 +4,12 @@
 
     <groupId>org.freedomdave</groupId>
     <artifactId>text-table-generator</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
 
     <scm>
         <connection>scm:git:git@github.com:paradoxpenguin/text-table-generator.git</connection>
         <developerConnection>scm:git:git@github.com:paradoxpenguin/text-table-generator.git</developerConnection>
-        <tag>v1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
