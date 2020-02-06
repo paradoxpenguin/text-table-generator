@@ -49,7 +49,7 @@ public class TextTableGenerator {
     /**
      * Constructor
      */
-    TextTableGenerator() {
+    public TextTableGenerator() {
         this.columns = new ArrayList<>();
     }
 

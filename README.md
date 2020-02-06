@@ -1,7 +1,7 @@
 # text-table-generator
 Allows for text based tables to be generated from tabular data with ease!
 
-For details on the API you can view the [Javadocs](doc/index.html)
+For details on the API you can view the [Javadocs](doc)
 
 For a simple example of creating a table, see the following code:
 ```java
